@@ -1,101 +1,311 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState } from "react"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Download, MapPin, Mail, Phone, Globe, Briefcase, Code, GraduationCap, LinkIcon } from "lucide-react"
+import html2canvas from "html2canvas"
+import jsPDF from "jspdf"
+import { Layers, FileCode, Server, Github, BrainCircuit } from "lucide-react"
+
+export default function ResumePage() {
+  const [isGenerating, setIsGenerating] = useState(false)
+
+  const handleDownloadPDF = async () => {
+    setIsGenerating(true)
+
+    try {
+      const resumeElement = document.getElementById("resume")
+      if (!resumeElement) return
+
+      // Set a fixed width for better PDF rendering
+      const originalWidth = resumeElement.style.width
+      resumeElement.style.width = "800px"
+
+      const canvas = await html2canvas(resumeElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      })
+
+      // Restore original width
+      resumeElement.style.width = originalWidth
+
+      const imgData = canvas.toDataURL("image/jpeg", 1.0)
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      })
+
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+      const imgWidth = canvas.width
+      const imgHeight = canvas.height
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight)
+      const imgX = (pdfWidth - imgWidth * ratio) / 2
+      const imgY = 0
+
+      pdf.addImage(imgData, "JPEG", imgX, imgY, imgWidth * ratio, imgHeight * ratio)
+      pdf.save("Pratik_Patwe_Resume.pdf")
+    } catch (error) {
+      console.error("Error generating PDF:", error)
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <Card className="p-8 shadow-lg" id="resume">
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+            <div>
+              <div className="flex items-center gap-4">
+                <div className="relative w-20 h-20">
+                  <Image
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pratik-b1.jpg-PfrmNyiMZ2hRWVDU3NC1VidmLHkqs5.jpeg"
+                    alt="Pratik Patwe"
+                    fill
+                    className="object-cover rounded-full"
+                  />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900">Pratik Patwe</h1>
+              </div>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 mt-3">
+                <div className="flex items-center text-gray-600">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  <span className="text-sm">Pune, India</span>
+                </div>
+                <div className="flex items-center text-gray-600">
+                  <Mail className="h-4 w-4 mr-1" />
+                  <a href="mailto:pratikpatwe111@gmail.com" className="text-sm hover:text-primary">
+                    pratikpatwe111@gmail.com
+                  </a>
+                </div>
+                <div className="flex items-center text-gray-600">
+                  <Phone className="h-4 w-4 mr-1" />
+                  <a href="tel:+918237913246" className="text-sm hover:text-primary">
+                    +91 8237913246
+                  </a>
+                </div>
+                <div className="flex items-center text-gray-600">
+                  <Globe className="h-4 w-4 mr-1" />
+                  <a
+                    href="https://www.pratikpatwe.xyz"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm hover:text-primary"
+                  >
+                    www.pratikpatwe.xyz
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* Summary Section */}
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-800 flex items-center mb-3">
+              <Briefcase className="h-5 w-5 mr-2 text-primary" />
+              Summary
+            </h2>
+            <Separator className="mb-4" />
+            <p className="text-gray-700">
+              Full-stack developer passionate about building scalable web applications and SaaS products. Currently
+              improving expertise in React, Next.js and backend development with Node.js.
+            </p>
+          </section>
+
+          {/* Skills Section */}
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-800 flex items-center mb-3">
+              <Code className="h-5 w-5 mr-2 text-primary" />
+              Skills
+            </h2>
+            <Separator className="mb-4" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-start">
+                <div className="mr-2 mt-0.5 bg-blue-100 p-1.5 rounded-md">
+                  <Layers className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-700">Frontend:</h3>
+                  <p className="text-gray-600">React.js, Next.js, Tailwind CSS, daisyUI, Shadcn</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <div className="mr-2 mt-0.5 bg-green-100 p-1.5 rounded-md">
+                  <Server className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-700">Backend:</h3>
+                  <p className="text-gray-600">Node.js, Express.js, Deno</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <div className="mr-2 mt-0.5 bg-yellow-100 p-1.5 rounded-md">
+                  <FileCode className="h-5 w-5 text-yellow-600" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-700">Languages:</h3>
+                  <p className="text-gray-600">JavaScript, Python</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <div className="mr-2 mt-0.5 bg-purple-100 p-1.5 rounded-md">
+                  <Github className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-700">Tools:</h3>
+                  <p className="text-gray-600">Git, GitHub, Claude</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <div className="mr-2 mt-0.5 bg-red-100 p-1.5 rounded-md">
+                  <BrainCircuit className="h-5 w-5 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-700">AI Integration:</h3>
+                  <p className="text-gray-600">OpenAI API, Hugging Face</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Projects Section */}
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-800 flex items-center mb-3">
+              <Code className="h-5 w-5 mr-2 text-primary" />
+              Projects
+            </h2>
+            <Separator className="mb-4" />
+
+            <div className="space-y-6">
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <h3 className="font-medium text-gray-800 mb-2">Personal Portfolio Websites</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start">
+                    <LinkIcon className="h-4 w-4 mr-2 mt-1 text-primary flex-shrink-0" />
+                    <div>
+                      <a
+                        href="https://pratikpatwe.xyz"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-primary hover:underline"
+                      >
+                        pratikpatwe.xyz
+                      </a>
+                      <p className="text-gray-700">My personal portfolio showcasing my skills and projects.</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start">
+                    <LinkIcon className="h-4 w-4 mr-2 mt-1 text-primary flex-shrink-0" />
+                    <div>
+                      <a
+                        href="https://sharmaabhay.vercel.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-primary hover:underline"
+                      >
+                        sharmaabhay.vercel.app
+                      </a>
+                      <p className="text-gray-700">A portfolio website built for a client.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <h3 className="font-medium text-gray-800 mb-2">Agency Work</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start">
+                    <LinkIcon className="h-4 w-4 mr-2 mt-1 text-primary flex-shrink-0" />
+                    <div>
+                      <a href="#" className="font-medium text-primary hover:underline">
+                        Vrittiverse
+                      </a>
+                      <p className="text-gray-700">Business website for a digital marketing agency.</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start">
+                    <LinkIcon className="h-4 w-4 mr-2 mt-1 text-primary flex-shrink-0" />
+                    <div>
+                      <a href="#" className="font-medium text-primary hover:underline">
+                        Artxsoft
+                      </a>
+                      <p className="text-gray-700">Website for my own tech company.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <h3 className="font-medium text-gray-800 mb-2">Micro SaaS / Tools</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start">
+                    <LinkIcon className="h-4 w-4 mr-2 mt-1 text-primary flex-shrink-0" />
+                    <div>
+                      <a href="#" className="font-medium text-primary hover:underline">
+                        FinScan - AI Bank Statement Analyzer
+                      </a>
+                      <p className="text-gray-700">
+                        A tool that analyzes bank statements using AI to provide financial insights.
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <h3 className="font-medium text-gray-800 mb-2">Other Projects</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start">
+                    <LinkIcon className="h-4 w-4 mr-2 mt-1 text-primary flex-shrink-0" />
+                    <div>
+                      <a href="#" className="font-medium text-primary hover:underline">
+                        Samarth Rentals
+                      </a>
+                      <p className="text-gray-700">A rental property listing platform.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* Education Section */}
+          <section className="mb-4">
+            <h2 className="text-xl font-semibold text-gray-800 flex items-center mb-3">
+              <GraduationCap className="h-5 w-5 mr-2 text-primary" />
+              Education
+            </h2>
+            <Separator className="mb-4" />
+            <div>
+              <h3 className="font-medium text-gray-800">MIT ADT University (2024 – Present)</h3>
+              <p className="text-gray-700">Bachelor of Technology (B.Tech) in Computer Science & Engineering</p>
+            </div>
+          </section>
+        </Card>
+
+        {/* Download Button */}
+        <div className="mt-6 flex justify-center">
+          <Button
+            onClick={handleDownloadPDF}
+            disabled={isGenerating}
+            className="bg-primary hover:bg-primary/90 text-white"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <Download className="h-4 w-4 mr-2" />
+            {isGenerating ? "Generating PDF..." : "Download Resume as PDF"}
+          </Button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+      </div>
+    </main>
+  )
 }
+
